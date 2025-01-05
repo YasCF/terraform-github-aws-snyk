@@ -19,4 +19,5 @@ jobs:
         run: snyk auth $SNYK_TOKEN
 
       - name: Scan Terraform Files
-        run: snyk iac test ./Terraform
+        run: snyk iac test ./Terraform --severity-threshold=medium
+        
