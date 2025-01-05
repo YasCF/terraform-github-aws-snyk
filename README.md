@@ -2,7 +2,7 @@
 
 ## Descripción del Proyecto
 
-Este proyecto está diseñado para aplicar los principios de DevOps mediante la implementación de infraestructura como código (IaC) con Terraform, la automatización de despliegues con GitHub Actions, y la integración de herramientas de seguridad como Snyk. Incluye configuraciones para Amazon VPC, EC2, Lambda, SQS, SNS, y CloudWatch.
+Este proyecto está diseñado para aplicar los principios de DevOps mediante la implementación de infraestructura como código (IaC) con Terraform, la automatización de despliegues con GitHub Actions, escaneo de seguridad, y configuración de contenedores Docker.
 
 ## Requisitos Previos
 
@@ -13,6 +13,7 @@ Este proyecto está diseñado para aplicar los principios de DevOps mediante la 
    - `AWS_ACCESS_KEY_ID`
    - `AWS_SECRET_ACCESS_KEY`
    - `SNYK_TOKEN`
+
 ## Configuración Inicial
 
 ### Cambios en `terraform.tfvars`
@@ -24,22 +25,15 @@ bucket_name = "mi-terraform-state-bucket1" # Nombre del bucket S3 creado
 region = "us-east-1"                      # Región del bucket
 key = "state/terraform.tfstate"           # Ruta del archivo de estado
 Cambios en Otros Archivos
-main.tf:
+main.tf
 
-## Cambios en Otros Archivos
-
-### `main.tf`
-- Asegúrate de que las configuraciones del backend en la sección `terraform` coincidan con las variables definidas en `terraform.tfvars`.
-
-### `variables.tf`
-- Verifica y personaliza las variables declaradas según tus necesidades, como los CIDR blocks y nombres de recursos.
-
-### Módulos (`modules/*`)
-- Revisa y ajusta las configuraciones específicas de cada módulo si es necesario.
-
-## Estructura del Proyecto
-
-```plaintext
+Asegúrate de que las configuraciones del backend en la sección terraform coincidan con las variables definidas en terraform.tfvars.
+variables.tf
+Verifica y personaliza las variables declaradas según tus necesidades, como los CIDR blocks y nombres de recursos.
+Módulos (modules/*)
+Revisa y ajusta las configuraciones específicas de cada módulo si es necesario.
+Estructura del Proyecto
+plaintext
 terraform-github-aws-devops/
 │
 ├── .github/workflows/
@@ -63,51 +57,30 @@ terraform-github-aws-devops/
 │       ├── lambda_function.zip # Código comprimido para funciones Lambda.
 │
 └── README.md                # Documentación del proyecto.
+Flujo de Trabajo con GitHub Actions
+Workflows Configurados
+Terraform Workflow (terraform.yml)
 
+Permite ejecutar init, plan, apply, y destroy directamente desde GitHub Actions.
+Snyk Scan Workflow (snyk-scan.yml)
 
+Realiza análisis de seguridad en archivos Terraform.
+Docker Image Scan Workflow (docker-image-scan.yml)
+
+Escanea imágenes Docker almacenadas en Amazon ECR.
+Ejecución
+Despliegue de Infraestructura:
+Selecciona el workflow terraform.yml en la pestaña Actions.
+Elige la opción all para ejecutar init, plan, y apply en conjunto.
+Escaneo de Seguridad:
+Selecciona el workflow snyk-scan.yml para escanear archivos Terraform.
+Selecciona el workflow docker-image-scan.yml para escanear imágenes Docker.
+Destrucción de Infraestructura:
+Selecciona el workflow terraform.yml y elige la opción destroy.
+Recomendaciones Finales
+Seguridad del Bucket S3:
+Asegúrate de que el bucket utilizado para almacenar el estado remoto de Terraform tenga políticas de acceso restringidas.
+Pruebas en Entornos Aislados:
 Antes de desplegar en producción, prueba la infraestructura en un entorno de desarrollo.
 Revisiones de Código:
-
 Realiza revisiones de los cambios en GitHub antes de ejecutar los workflows.
-
-## Flujo de Trabajo con GitHub Actions
-
-### Workflows Configurados
-
-1. **Terraform Workflow (`terraform.yml`)**
-   - Permite ejecutar `init`, `plan`, `apply`, y `destroy` directamente desde GitHub Actions.
-
-2. **Snyk Scan Workflow (`snyk-scan.yml`)**
-   - Realiza análisis de seguridad en archivos Terraform.
-
-3. **Docker Image Scan Workflow (`docker-image-scan.yml`)**
-   - Escanea imágenes Docker almacenadas en Amazon ECR.
-
----
-
-### Ejecución
-
-#### Despliegue de Infraestructura:
-1. Selecciona el workflow `terraform.yml` en la pestaña **Actions**.
-2. Elige la opción `all` para ejecutar `init`, `plan`, y `apply` en conjunto.
-
-#### Escaneo de Seguridad:
-1. Selecciona el workflow `snyk-scan.yml` para escanear archivos Terraform.
-2. Selecciona el workflow `docker-image-scan.yml` para escanear imágenes Docker.
-
-#### Destrucción de Infraestructura:
-1. Selecciona el workflow `terraform.yml` y elige la opción `destroy`.
-
----
-
-## Recomendaciones Finales
-
-### Seguridad del Bucket S3:
-- Asegúrate de que el bucket utilizado para almacenar el estado remoto de Terraform tenga políticas de acceso restringidas.
-
-### Pruebas en Entornos Aislados:
-- Antes de desplegar en producción, prueba la infraestructura en un entorno de desarrollo.
-
-### Revisiones de Código:
-- Realiza revisiones de los cambios en GitHub antes de ejecutar los workflows.
-
