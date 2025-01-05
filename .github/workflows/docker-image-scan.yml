@@ -1,0 +1,30 @@
+name: Docker Image Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-image-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: List Docker Images
+        run: aws ecr list-images --repository-name your-repository-name --region us-east-1
+
+      - name: Pull Docker Image
+        run: |
+          docker pull your-account-id.dkr.ecr.us-east-1.amazonaws.com/your-repository-name:latest
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth $SNYK_TOKEN
+
+      - name: Scan Docker Image
+        run: snyk container test your-account-id.dkr.ecr.us-east-1.amazonaws.com/your-repository-name:latest
