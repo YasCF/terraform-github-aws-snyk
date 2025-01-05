@@ -13,6 +13,7 @@ on:
           - apply
           - all   # Ejecuta init, plan y apply
           - destroy
+
 jobs:
   init:
     if: ${{ github.event.inputs.action == 'init' || github.event.inputs.action == 'all' }}
@@ -37,8 +38,10 @@ jobs:
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
+
   plan:
     if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
+    needs: init
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -56,10 +59,6 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      - name: Terraform Init (Ensure Initialized)
-        working-directory: ./Terraform
-        run: terraform init -reconfigure
-
       - name: Terraform Plan
         working-directory: ./Terraform
         run: |
@@ -68,6 +67,7 @@ jobs:
 
   apply:
     if: ${{ github.event.inputs.action == 'apply' || github.event.inputs.action == 'all' }}
+    needs: plan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -89,7 +89,6 @@ jobs:
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
-          terraform plan -var-file="terraform.tfvars" -out=tfplan
           terraform apply -auto-approve tfplan
 
   destroy:
