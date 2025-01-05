@@ -1,50 +1,45 @@
-Implementación de Soluciones DevOps
+# Implementación de Soluciones DevOps
 
-Descripción del Proyecto
-Este proyecto está diseñado para aprender y aplicar los principios de DevOps mediante la implementación de infraestructura como código (IaC) con Terraform, la automatización de despliegues con GitHub Actions, y la integración de herramientas de seguridad como Snyk. El repositorio incluye configuraciones para servicios como Amazon VPC, EC2, Lambda, SQS, SNS, y CloudWatch.
+## Descripción del Proyecto
 
-Requisitos Previos
-Terraform (v1.5.0 o superior) instalado en tu sistema.
-AWS CLI configurado con credenciales válidas.
-Un bucket S3 ya creado para almacenar el archivo de estado remoto de Terraform.
-Configuración de los siguientes secretos en el repositorio de GitHub:
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-SNYK_TOKEN
-Configuración Inicial
-1. Cambios en terraform.tfvars
-Antes de ejecutar cualquier comando de Terraform, actualiza las variables en el archivo terraform.tfvars para que coincidan con tu entorno.
+Este proyecto está diseñado para aplicar los principios de DevOps mediante la implementación de infraestructura como código (IaC) con Terraform, la automatización de despliegues con GitHub Actions, y la integración de herramientas de seguridad como Snyk. Incluye configuraciones para Amazon VPC, EC2, Lambda, SQS, SNS, y CloudWatch.
 
-Variables importantes:
+## Requisitos Previos
 
-bucket_name: Nombre del bucket S3 donde se almacenará el archivo de estado remoto.
-region: Región en la que se encuentra el bucket.
-key: Ruta del archivo de estado dentro del bucket.
-Ejemplo:
+1. **Terraform** (v1.5.0 o superior) instalado en tu sistema.
+2. **AWS CLI** configurado con credenciales válidas.
+3. Un **bucket S3** ya creado para almacenar el archivo de estado remoto de Terraform.
+4. Configuración de los siguientes secretos en el repositorio de GitHub:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+   - `SNYK_TOKEN`
+## Configuración Inicial
 
-hcl
-Copiar código
-bucket_name = "mi-terraform-state-bucket1"
-region = "us-east-1"
-key = "state/terraform.tfstate"
-2. Cambios en Otros Archivos
-main.tf (Archivo principal de Terraform):
+### Cambios en `terraform.tfvars`
 
-Verifica que las configuraciones del backend en la sección terraform coincidan con las variables definidas en terraform.tfvars.
-Modifica la sección provider "aws" para usar la región correspondiente a tu entorno.
+Antes de ejecutar cualquier comando de Terraform, actualiza las variables en el archivo `terraform.tfvars`:
+
+```hcl
+bucket_name = "mi-terraform-state-bucket1" # Nombre del bucket S3 creado
+region = "us-east-1"                      # Región del bucket
+key = "state/terraform.tfstate"           # Ruta del archivo de estado
+Cambios en Otros Archivos
+main.tf:
+
+Asegúrate de que las configuraciones del backend en la sección terraform coincidan con las variables definidas en terraform.tfvars.
 variables.tf:
 
-Asegúrate de que las variables declaradas reflejen tus necesidades (ejemplo: CIDR blocks, tipos de instancia, nombres de recursos).
-modules/* (Módulos):
+Verifica y personaliza las variables declaradas según tus necesidades, como los CIDR blocks y nombres de recursos.
+Módulos (modules/*):
 
-Los módulos pueden requerir ajustes adicionales para nombres de recursos específicos o configuraciones personalizadas. Verifica cada uno según tu caso.
+Revisa y ajusta las configuraciones específicas de cada módulo si es necesario.
 Estructura del Proyecto
-bash
+plaintext
 Copiar código
 terraform-github-aws-devops/
 │
 ├── .github/workflows/
-│   ├── terraform.yml        # Workflow para despliegue y destrucción de la infraestructura.
+│   ├── terraform.yml        # Workflow para despliegue y destrucción de infraestructura.
 │   ├── snyk-scan.yml        # Workflow para escaneo de seguridad con Snyk.
 │   ├── docker-image-scan.yml # Workflow para escaneo de imágenes Docker.
 │
