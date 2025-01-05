@@ -57,7 +57,7 @@ terraform-github-aws-devops/
 │       ├── lambda_function.zip # Código comprimido para funciones Lambda.
 │
 └── README.md                # Documentación del proyecto.
-Flujo de Trabajo con GitHub Actions
+# Flujo de Trabajo con GitHub Actions
 Workflows Configurados
 Terraform Workflow (terraform.yml)
 
