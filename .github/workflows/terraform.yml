@@ -85,6 +85,10 @@ jobs:
         with:
           terraform_version: 1.5.0
 
+      - name: Terraform Init
+        working-directory: ./Terraform
+        run: terraform init -reconfigure
+
       - name: Terraform Apply
         working-directory: ./Terraform
         run: terraform apply -auto-approve tfplan
