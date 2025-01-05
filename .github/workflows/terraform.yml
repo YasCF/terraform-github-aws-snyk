@@ -12,11 +12,10 @@ on:
           - plan
           - apply
           - destroy
-          - all
 
 jobs:
   init:
-    if: ${{ github.event.inputs.action == 'init' || github.event.inputs.action == 'all' }}
+    if: ${{ github.event.inputs.action == 'init' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -39,7 +38,7 @@ jobs:
         run: terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
 
   plan:
-    if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
+    if: ${{ github.event.inputs.action == 'plan' }}
     needs: init
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +68,7 @@ jobs:
           path: ./Terraform/tfplan
 
   apply:
-    if: ${{ github.event.inputs.action == 'apply' || github.event.inputs.action == 'all' }}
+    if: ${{ github.event.inputs.action == 'apply' }}
     needs: plan
     runs-on: ubuntu-latest
     steps:
@@ -99,7 +98,7 @@ jobs:
         run: terraform apply -auto-approve tfplan
 
   destroy:
-    if: ${{ github.event.inputs.action == 'destroy' || github.event.inputs.action == 'all' }}
+    if: ${{ github.event.inputs.action == 'destroy' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
