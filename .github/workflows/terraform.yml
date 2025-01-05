@@ -36,10 +36,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ./Terraform
-        run: terraform init \
-          -backend-config="bucket=mi-terraform-state-bucket1" \
-          -backend-config="key=terraform/state/terraform.tfstate" \
-          -backend-config="region=us-east-1"
+        run: terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1"
 
   plan:
     if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
