@@ -8,11 +8,11 @@ on:
         required: true
         type: choice
         options:
-          - init   # Inicializa el backend
-          - plan   # Genera el plan
-          - apply  # Aplica el plan
-          - destroy # Elimina la infraestructura
-
+          - init
+          - plan
+          - apply
+          - all   # Ejecuta init, plan y apply
+          - destroy
 jobs:
   init:
     if: ${{ github.event.inputs.action == 'init' || github.event.inputs.action == 'all' }}
