@@ -12,10 +12,11 @@ on:
           - plan
           - apply
           - destroy
+          - all
 
 jobs:
   init:
-    if: ${{ github.event.inputs.action == 'init' }}
+    if: ${{ github.event.inputs.action == 'init' || github.event.inputs.action == 'all' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -38,7 +39,7 @@ jobs:
         run: terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
 
   plan:
-    if: ${{ github.event.inputs.action == 'plan' }}
+    if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
     needs: init
     runs-on: ubuntu-latest
     steps:
@@ -61,14 +62,8 @@ jobs:
         working-directory: ./Terraform
         run: terraform plan -var-file="terraform.tfvars" -out=tfplan
 
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: ./Terraform/tfplan
-
   apply:
-    if: ${{ github.event.inputs.action == 'apply' }}
+    if: ${{ github.event.inputs.action == 'apply' || github.event.inputs.action == 'all' }}
     needs: plan
     runs-on: ubuntu-latest
     steps:
@@ -87,18 +82,12 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
-        with:
-          name: tfplan
-          path: ./Terraform
-
       - name: Terraform Apply
         working-directory: ./Terraform
         run: terraform apply -auto-approve tfplan
 
   destroy:
-    if: ${{ github.event.inputs.action == 'destroy' }}
+    if: ${{ github.event.inputs.action == 'destroy' || github.event.inputs.action == 'all' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
