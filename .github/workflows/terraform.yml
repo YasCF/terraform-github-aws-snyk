@@ -6,8 +6,7 @@ on:
       action:
         description: "Choose the Terraform action to perform"
         required: true
-        type: string
-        default: "all" # Por defecto, ejecuta todas las etapas
+        type: choice
         options:
           - init
           - plan
