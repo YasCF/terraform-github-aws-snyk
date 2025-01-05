@@ -1,0 +1,22 @@
+name: Terraform File Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth $SNYK_TOKEN
+
+      - name: Scan Terraform Files
+        run: snyk iac test ./Terraform
