@@ -115,4 +115,4 @@ jobs:
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
-          terraform destroy -auto-approve ahora me lo puedes separar el init plan y apply
+          terraform destroy -auto-approve
