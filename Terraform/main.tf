@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source              = "./Terraform/modules/vpc"
+  source              = "./modules/vpc"
   cidr_block          = var.vpc_cidr_block
   vpc_name            = var.vpc_name
   public_subnet_cidr  = var.public_subnet_cidr
@@ -32,7 +32,7 @@ module "vpc" {
 }
 
 module "ec2" {
-  source              = "./Terraform/modules/ec2"
+  source              = "./modules/ec2"
   ami                 = var.ami
   instance_type       = var.instance_type
   key_name            = var.key_name
@@ -46,7 +46,7 @@ module "ec2" {
 
 
 module "lambda_sqs_sns" {
-  source               = "./Terraform/modules/lambda_sqs_sns"
+  source               = "./modules/lambda_sqs_sns"
   terraform_bucket_name = var.terraform_bucket_name # Reutilizar el bucket del tfstate
   lambda_zip_file_name  = var.lambda_zip_file_name
   lambda_name           = var.lambda_name
@@ -62,7 +62,7 @@ module "lambda_sqs_sns" {
 
 
 module "cloudwatch" {
-  source                 = "./Terraform/modules/cloudwatch"
+  source                 = "./modules/cloudwatch"
   ec2_instance_id        = module.ec2.ec2_instance_id
   ec2_instance_name      = var.instance_name
   sns_topic_arn          = module.lambda_sqs_sns.sns_topic_arn
