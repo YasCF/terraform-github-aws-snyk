@@ -8,12 +8,14 @@ on:
         required: true
         type: choice
         options:
-          - deploy   # Realiza init, plan, apply
-          - destroy  # Realiza destroy
+          - init   # Inicializa el backend
+          - plan   # Genera el plan
+          - apply  # Aplica el plan
+          - destroy # Elimina la infraestructura
 
 jobs:
-  deploy:
-    if: ${{ github.event.inputs.action == 'deploy' }}
+  init:
+    if: ${{ github.event.inputs.action == 'init' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,7 +33,59 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      - name: Terraform Init, Plan, and Apply
+      - name: Terraform Init
+        working-directory: ./Terraform
+        run: |
+          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
+  plan:
+    if: ${{ github.event.inputs.action == 'plan' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init (Ensure Initialized)
+        working-directory: ./Terraform
+        run: terraform init -reconfigure
+
+      - name: Terraform Plan
+        working-directory: ./Terraform
+        run: |
+          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
+          terraform plan -var-file="terraform.tfvars" -out=tfplan
+
+  apply:
+    if: ${{ github.event.inputs.action == 'apply' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-east-1"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Apply
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
@@ -61,4 +115,4 @@ jobs:
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
-          terraform destroy -auto-approve
+          terraform destroy -auto-approve ahora me lo puedes separar el init plan y apply
