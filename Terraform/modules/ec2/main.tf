@@ -7,7 +7,7 @@ resource "aws_instance" "ec2_instance" {
 
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
-  user_data = file("${path.root}/resources/bootstrap.sh")
+  user_data = file("${path.root}/Terraform/resources/bootstrap.sh")
 
   tags = {
     Name = var.instance_name
