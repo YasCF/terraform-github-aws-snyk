@@ -89,6 +89,7 @@ jobs:
         working-directory: ./Terraform
         run: |
           terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
+          terraform plan -var-file="terraform.tfvars" -out=tfplan
           terraform apply -auto-approve tfplan
 
   destroy:
