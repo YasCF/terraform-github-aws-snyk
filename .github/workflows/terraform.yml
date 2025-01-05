@@ -6,7 +6,8 @@ on:
       action:
         description: "Choose the Terraform action to perform"
         required: true
-        type: choice
+        type: string
+        default: "all" # Por defecto, ejecuta todas las etapas
         options:
           - init
           - plan
@@ -36,9 +37,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ./Terraform
-        run: terraform init -backend-config="bucket=mi-terraform-state-bucket1" \
-                            -backend-config="key=terraform/state/terraform.tfstate" \
-                            -backend-config="region=us-east-1"
+        run: terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1"
 
   plan:
     if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
