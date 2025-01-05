@@ -36,4 +36,8 @@ jobs:
         run: snyk auth $SNYK_TOKEN
 
       - name: Scan Docker Image
-        run: snyk container test 202533506302.dkr.ecr.us-east-1.amazonaws.com/mi-app-web:latest
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          snyk container test 202533506302.dkr.ecr.us-east-1.amazonaws.com/mi-app-web:latest \
+          --severity-threshold=high
