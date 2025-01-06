@@ -17,6 +17,21 @@ Este proyecto está diseñado para aplicar los principios de DevOps mediante la 
 
 ## Configuración Inicial
 
+### Creación DynamoDB
+
+Terraform utiliza una tabla DynamoDB para gestionar los bloqueos del estado remoto, garantizando que múltiples ejecuciones no modifiquen el estado al mismo tiempo. Asegúrate de que la tabla DynamoDB esté configurada correctamente antes de ejecutar los workflows.
+
+ **Configuración de la Tabla DynamoDB**
+   
+   - Crea manualmente una tabla DynamoDB con las siguientes características:
+     - **Nombre:** `terraform-lock` (o el nombre que definas en tu archivo `main.tf`).
+     - **Clave de Partición:** `LockID` (tipo `String`).
+   - Asegúrate de que la tabla se encuentre en la misma región que el bucket S3 configurado.
+
+### Creación S3
+
+Terraform utiliza un bucket S3 para almacenar el estado remoto de la infraestructura, lo que permite la colaboración y el control de versiones en equipos. Antes de ejecutar cualquier workflow, es necesario crear manualmente este bucket y configurar las políticas de acceso adecuadas.
+     
 ### Cambios en `terraform.tfvars`
 
 Antes de ejecutar cualquier comando de Terraform, actualiza las variables en el archivo `terraform.tfvars`:
@@ -25,18 +40,23 @@ Antes de ejecutar cualquier comando de Terraform, actualiza las variables en el 
 bucket_name = "mi-terraform-state-bucket1" # Nombre del bucket S3 creado
 region = "us-east-1"                      # Región del bucket
 key = "state/terraform.tfstate"           # Ruta del archivo de estado
+dynamodb_table = "terraform-lock"  # Nombre de la tabla DynamoDB
 ```
+     
 ### Ajustes en los Archivos de Workflow
 
-Los workflows de GitHub Actions dependen del bucket S3 configurado para almacenar el archivo de estado remoto de Terraform y del repositorio de imágenes Docker en ECR. Antes de ejecutar cualquier flujo de trabajo, asegúrate de ajustar los siguientes puntos:
+Los workflows de GitHub Actions dependen del DynamoDB, bucket S3 configurado para almacenar el archivo de estado remoto de Terraform y del repositorio de imágenes Docker en ECR. Antes de ejecutar cualquier flujo de trabajo, asegúrate de ajustar las variables 
 
 1. **Workflow `terraform.yml`**
    
-   Cambia `mi-terraform-state-bucket1` y `us-east-1` por los valores específicos de tu bucket.
+   `S3`: Cambia `mi-terraform-state-bucket1` y `us-east-1` por los valores específicos de tu bucket.
+   
    ```hcl
      run: |
        terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
      ```
+    `DynamoDB`: El flujo de trabajo `terraform.yml` ya considera automáticamente el uso de la tabla DynamoDB configurada en el backend. No necesitas realizar ajustes adicionales, pero asegúrate de que la        tabla esté creada antes de ejecutar el workflow.
+
 3. **Workflow `docker-image-scan.yml`**
    
    Cambia `202533506302.dkr.ecr.us-east-1.amazonaws.com/mi-app-web` por tu repositorio ECR.
