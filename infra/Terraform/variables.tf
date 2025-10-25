@@ -195,3 +195,16 @@ variable "dynamodb_table_name" {
   description = "Nombre de la tabla DynamoDB para el estado de bloqueo remoto"
   type        = string
 }
+
+# CloudWatch Configuration
+variable "cpu_threshold" {
+  description = "Umbral de uso de CPU para las tareas ECS (porcentaje)"
+  type        = number
+  default     = 80
+}
+
+variable "memory_threshold" {
+  description = "Umbral de uso de memoria para las tareas ECS (porcentaje)"
+  type        = number
+  default     = 85
+}

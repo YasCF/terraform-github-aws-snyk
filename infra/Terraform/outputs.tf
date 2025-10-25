@@ -78,3 +78,19 @@ output "sns_topic_arn" {
   description = "ARN del tema SNS"
   value       = module.lambda_sqs_sns.sns_topic_arn
 }
+
+# CloudWatch Outputs
+output "ecs_cpu_alarm_arn" {
+  description = "ARN de la alarma de CPU del servicio ECS"
+  value       = module.cloudwatch.ecs_cpu_alarm_arn
+}
+
+output "ecs_memory_alarm_arn" {
+  description = "ARN de la alarma de memoria del servicio ECS"
+  value       = module.cloudwatch.ecs_memory_alarm_arn
+}
+
+output "ecs_running_tasks_alarm_arn" {
+  description = "ARN de la alarma de tareas ejecutándose"
+  value       = module.cloudwatch.ecs_running_tasks_alarm_arn
+}

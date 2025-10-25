@@ -1,14 +1,14 @@
-output "ec2_cpu_alarm" {
-  description = "ARN de la alarma de uso de CPU de EC2"
-  value       = aws_cloudwatch_metric_alarm.ec2_cpu_alarm.arn
+output "ecs_cpu_alarm_arn" {
+  description = "ARN de la alarma de CPU del servicio ECS"
+  value       = aws_cloudwatch_metric_alarm.ecs_cpu_alarm.arn
 }
 
-output "ec2_network_out_alarm" {
-  description = "ARN de la alarma de salida de red de EC2"
-  value       = aws_cloudwatch_metric_alarm.ec2_network_out_alarm.arn
+output "ecs_memory_alarm_arn" {
+  description = "ARN de la alarma de memoria del servicio ECS"
+  value       = aws_cloudwatch_metric_alarm.ecs_memory_alarm.arn
 }
 
-output "network_in_alarm_arn" {
-  description = "ARN de la alarma de NetworkIn"
-  value       = aws_cloudwatch_metric_alarm.network_in_alarm.arn
+output "ecs_running_tasks_alarm_arn" {
+  description = "ARN de la alarma de tareas ejecutándose"
+  value       = aws_cloudwatch_metric_alarm.ecs_running_tasks_alarm.arn
 }

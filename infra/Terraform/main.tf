@@ -164,3 +164,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+# CloudWatch Monitoring for ECS
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+
+  ecs_cluster_name   = module.ecs.cluster_name
+  ecs_service_name   = module.ecs.service_name
+  sns_topic_arn      = module.lambda_sqs_sns.sns_topic_arn
+  cpu_threshold      = var.cpu_threshold
+  memory_threshold   = var.memory_threshold
+  desired_task_count = var.ecs_desired_count
+
+  depends_on = [module.ecs]
+}

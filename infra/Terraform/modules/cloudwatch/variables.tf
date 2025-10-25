@@ -1,10 +1,10 @@
-variable "ec2_instance_id" {
-  description = "ID de la instancia EC2"
+variable "ecs_cluster_name" {
+  description = "Nombre del cluster ECS"
   type        = string
 }
 
-variable "ec2_instance_name" {
-  description = "Nombre de la instancia EC2"
+variable "ecs_service_name" {
+  description = "Nombre del servicio ECS"
   type        = string
 }
 
@@ -14,19 +14,19 @@ variable "sns_topic_arn" {
 }
 
 variable "cpu_threshold" {
-  description = "Umbral de uso de CPU para la instancia EC2"
+  description = "Umbral de uso de CPU para las tareas ECS (porcentaje)"
   type        = number
   default     = 80
 }
 
-variable "network_out_threshold" {
-  description = "Umbral de salida de red (bytes) para la instancia EC2"
+variable "memory_threshold" {
+  description = "Umbral de uso de memoria para las tareas ECS (porcentaje)"
   type        = number
-  default     = 1000000
+  default     = 85
 }
 
-variable "network_in_threshold" {
-  description = "Umbral de datos entrantes para la alarma (en bytes)"
+variable "desired_task_count" {
+  description = "Número deseado de tareas ECS"
   type        = number
-  default     = 500000  # 500 KB
+  default     = 2
 }
