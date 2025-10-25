@@ -15,7 +15,7 @@ output "service_name" {
 
 output "service_arn" {
   description = "ARN del servicio ECS"
-  value       = aws_ecs_service.this.arn
+  value       = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${aws_ecs_cluster.this.name}/${aws_ecs_service.this.name}"
 }
 
 output "task_definition_arn" {

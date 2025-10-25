@@ -3,6 +3,11 @@ output "lambda_function_name" {
   value       = aws_lambda_function.lambda_function.function_name
 }
 
+output "lambda_function_arn" {
+  description = "ARN de la función Lambda"
+  value       = aws_lambda_function.lambda_function.arn
+}
+
 output "sqs_queue_url" {
   description = "URL de la cola SQS"
   value       = aws_sqs_queue.sqs_queue.id
