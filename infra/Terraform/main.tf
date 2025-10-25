@@ -9,11 +9,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "mi-terraform-state-bucket1" # Nombre del bucket existente
-    key            = "state/terraform.tfstate"    # Ruta del archivo de estado
-    region         = "us-east-1"                  # Región del bucket
-    dynamodb_table = "terraform-lock"             # Tabla DynamoDB para bloqueo remoto
-    encrypt        = true                         # Encriptar estado remoto
+    bucket         = "roca-bucket-aws"         # Nombre del bucket existente
+    key            = "state/terraform.tfstate" # Ruta del archivo de estado
+    region         = "us-east-1"               # Región del bucket
+    dynamodb_table = "terraform-lock"          # Tabla DynamoDB para bloqueo remoto
+    encrypt        = true                      # Encriptar estado remoto
   }
 }
 
@@ -50,7 +50,7 @@ module "ecs" {
   task_family        = var.ecs_task_family
   cpu                = var.ecs_cpu
   memory             = var.ecs_memory
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_role.arn
   container_name     = var.ecs_container_name
   container_image    = var.ecs_container_image
   container_port     = var.ecs_container_port

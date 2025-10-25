@@ -52,32 +52,32 @@ output "ecs_task_definition_arn" {
 }
 
 # Lambda Outputs
-output "lambda_function_name" {
-  description = "Nombre de la función Lambda"
-  value       = module.lambda_sqs_sns.lambda_function_name
-}
+# output "lambda_function_name" {
+#   description = "Nombre de la función Lambda"
+#   value       = module.lambda_sqs_sns.lambda_function_name
+# }
 
-output "lambda_function_arn" {
-  description = "ARN de la función Lambda"
-  value       = module.lambda_sqs_sns.lambda_function_arn
-}
+# output "lambda_function_arn" {
+#   description = "ARN de la función Lambda"
+#   value       = module.lambda_sqs_sns.lambda_function_arn
+# }
 
 # SQS Outputs
-output "sqs_queue_url" {
-  description = "URL de la cola SQS"
-  value       = module.lambda_sqs_sns.sqs_queue_url
-}
+# output "sqs_queue_url" {
+#   description = "URL de la cola SQS"
+#   value       = module.lambda_sqs_sns.sqs_queue_url
+# }
 
-output "sqs_queue_arn" {
-  description = "ARN de la cola SQS"
-  value       = module.lambda_sqs_sns.sqs_queue_arn
-}
+# output "sqs_queue_arn" {
+#   description = "ARN de la cola SQS"
+#   value       = module.lambda_sqs_sns.sqs_queue_arn
+# }
 
 # SNS Outputs
-output "sns_topic_arn" {
-  description = "ARN del tema SNS"
-  value       = module.lambda_sqs_sns.sns_topic_arn
-}
+# output "sns_topic_arn" {
+#   description = "ARN del tema SNS"
+#   value       = module.lambda_sqs_sns.sns_topic_arn
+# }
 
 # CloudWatch Outputs
 output "ecs_cpu_alarm_arn" {
