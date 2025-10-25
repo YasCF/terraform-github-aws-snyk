@@ -8,9 +8,16 @@ variable "vpc_name" {
   type        = string
 }
 
-variable "public_subnet_cidr" {
-  description = "CIDR block para la subred pública"
-  type        = string
+variable "public_subnet_cidrs" {
+  description = "Lista de CIDR blocks para las subredes públicas"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.3.0/24"]
+}
+
+variable "public_subnet_azs" {
+  description = "Lista de zonas de disponibilidad para las subredes públicas"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]
 }
 
 variable "private_subnet_cidr" {

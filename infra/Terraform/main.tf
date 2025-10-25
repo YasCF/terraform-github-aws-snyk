@@ -40,7 +40,7 @@ module "alb" {
   target_group_name  = var.target_group_name
   target_port        = var.target_port
   vpc_id             = module.vpc.vpc_id
-  subnet_ids         = [module.vpc.public_subnet_id]
+  subnet_ids         = module.vpc.public_subnet_ids # Ahora pasamos múltiples subredes
   security_group_ids = [aws_security_group.alb_sg.id]
 }
 
@@ -98,7 +98,7 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
-resource "aws_security_group" "ecs_sg" {
+resource "aws_security_group" "eks_sg" {
   name        = "${var.environment}-eks-sg"   # Cambiado de ecs-sg a eks-sg
   description = "Security group for EKS pods" # Cambiado de ECS tasks a EKS pods
   vpc_id      = module.vpc.vpc_id

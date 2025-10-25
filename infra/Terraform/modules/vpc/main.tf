@@ -9,15 +9,16 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Crear Subred Pública
+# Crear Subredes Públicas
 resource "aws_subnet" "public" {
+  count                   = length(var.public_subnet_cidrs)
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet_cidr
+  cidr_block              = var.public_subnet_cidrs[count.index]
   map_public_ip_on_launch = true
-  availability_zone       = var.availability_zone
+  availability_zone       = var.public_subnet_azs[count.index]
 
   tags = {
-    Name = var.public_subnet_name
+    Name = "${var.public_subnet_name}-${count.index + 1}"
   }
 }
 
