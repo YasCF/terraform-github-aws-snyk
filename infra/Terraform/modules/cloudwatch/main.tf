@@ -15,7 +15,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_alarm" {
   }
 
   alarm_description = "Alarma activada si el uso de CPU del servicio ECS excede el ${var.cpu_threshold}%."
-  alarm_actions     = [var.sns_topic_arn]
+  alarm_actions     = var.sns_topic_arn != "" ? [var.sns_topic_arn] : []
 
   tags = {
     Name = "${var.ecs_service_name}-cpu-alarm"
@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_alarm" {
   }
 
   alarm_description = "Alarma activada si el uso de memoria del servicio ECS excede el ${var.memory_threshold}%."
-  alarm_actions     = [var.sns_topic_arn]
+  alarm_actions     = var.sns_topic_arn != "" ? [var.sns_topic_arn] : []
 
   tags = {
     Name = "${var.ecs_service_name}-memory-alarm"
@@ -56,16 +56,3 @@ resource "aws_cloudwatch_metric_alarm" "ecs_running_tasks_alarm" {
   period              = 60
   statistic           = "Average"
   threshold           = var.desired_task_count
-
-  dimensions = {
-    ClusterName = var.ecs_cluster_name
-    ServiceName = var.ecs_service_name
-  }
-
-  alarm_description = "Alarma activada si el número de tareas ejecutándose es menor al deseado (${var.desired_task_count})."
-  alarm_actions     = [var.sns_topic_arn]
-
-  tags = {
-    Name = "${var.ecs_service_name}-running-tasks-alarm"
-  }
-}

@@ -63,19 +63,21 @@ module "ecs" {
   depends_on = [module.alb]
 }
 
-module "lambda_sqs_sns" {
-  source                = "./modules/lambda_sqs_sns"
-  terraform_bucket_name = var.terraform_bucket_name # Reutilizar el bucket del tfstate
-  lambda_zip_file_name  = var.lambda_zip_file_name
-  lambda_name           = var.lambda_name
-  lambda_runtime        = var.lambda_runtime
-  lambda_handler        = var.lambda_handler
-  lambda_timeout        = var.lambda_timeout
-  lambda_memory         = var.lambda_memory
-  sqs_queue_name        = var.sqs_queue_name
-  sns_topic_name        = var.sns_topic_name
-  environment           = var.environment
-}
+# Lambda + SQS + SNS deshabilitado para AWS Labs (requiere crear roles IAM)
+# Descomentar cuando tengas permisos completos en AWS
+# module "lambda_sqs_sns" {
+#   source                = "./modules/lambda_sqs_sns"
+#   terraform_bucket_name = var.terraform_bucket_name
+#   lambda_zip_file_name  = var.lambda_zip_file_name
+#   lambda_name           = var.lambda_name
+#   lambda_runtime        = var.lambda_runtime
+#   lambda_handler        = var.lambda_handler
+#   lambda_timeout        = var.lambda_timeout
+#   lambda_memory         = var.lambda_memory
+#   sqs_queue_name        = var.sqs_queue_name
+#   sns_topic_name        = var.sns_topic_name
+#   environment           = var.environment
+# }
 
 
 
@@ -132,37 +134,42 @@ resource "aws_security_group" "ecs_sg" {
   }
 
   tags = {
-    Name        = "${var.environment}-ecs-sg"
-    Environment = var.environment
   }
 }
 
 # IAM Role for ECS Task Execution
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "${var.environment}-ecs-task-execution-role"
+# IAM Role para ECS deshabilitado para AWS Labs (requiere permisos de creación de roles)
+# Descomentar cuando tengas permisos completos en AWS
+# resource "aws_iam_role" "ecs_task_execution_role" {
+#   name = "${var.environment}-ecs-task-execution-role"
+#
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Action = "sts:AssumeRole",
+#         Effect = "Allow",
+#         Principal = {
+#           Service = "ecs-tasks.amazonaws.com"
+#         }
+#       }
+#     ]
+#   })
+#
+#   tags = {
+#     Name        = "${var.environment}-ecs-task-execution-role"
+#     Environment = var.environment
+#   }
+# }
+#
+# resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
+#   role       = aws_iam_role.ecs_task_execution_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+# }
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = {
-    Name        = "${var.environment}-ecs-task-execution-role"
-    Environment = var.environment
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-  role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+# Usar rol existente en AWS Labs
+data "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecsTaskExecutionRole"
 }
 
 # CloudWatch Monitoring for ECS
@@ -171,7 +178,7 @@ module "cloudwatch" {
 
   ecs_cluster_name   = module.ecs.cluster_name
   ecs_service_name   = module.ecs.service_name
-  sns_topic_arn      = module.lambda_sqs_sns.sns_topic_arn
+  sns_topic_arn      = ""  # Deshabilitado para AWS Labs (Lambda/SNS requiere roles IAM)
   cpu_threshold      = var.cpu_threshold
   memory_threshold   = var.memory_threshold
   desired_task_count = var.ecs_desired_count

@@ -8,11 +8,6 @@ variable "ecs_service_name" {
   type        = string
 }
 
-variable "sns_topic_arn" {
-  description = "ARN del tema SNS para notificaciones de alarmas"
-  type        = string
-}
-
 variable "cpu_threshold" {
   description = "Umbral de uso de CPU para las tareas ECS (porcentaje)"
   type        = number
@@ -29,4 +24,10 @@ variable "desired_task_count" {
   description = "Número deseado de tareas ECS"
   type        = number
   default     = 2
+}
+
+variable "sns_topic_arn" {
+  description = "ARN del tema SNS para notificaciones (opcional)"
+  type        = string
+  default     = ""
 }
