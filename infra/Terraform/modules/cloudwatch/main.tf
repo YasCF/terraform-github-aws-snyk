@@ -5,7 +5,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_alarm" {
   evaluation_periods  = 2
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ECS"
-  period              = 300  # 5 minutos
+  period              = 300 # 5 minutos
   statistic           = "Average"
   threshold           = var.cpu_threshold
 
@@ -29,7 +29,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_alarm" {
   evaluation_periods  = 2
   metric_name         = "MemoryUtilization"
   namespace           = "AWS/ECS"
-  period              = 300  # 5 minutos
+  period              = 300 # 5 minutos
   statistic           = "Average"
   threshold           = var.memory_threshold
 

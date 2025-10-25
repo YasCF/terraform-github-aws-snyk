@@ -1,5 +1,5 @@
 # AWS Configuration
-aws_region = "us-east-1"
+aws_region  = "us-east-1"
 environment = "dev"
 
 # VPC Configuration
@@ -13,9 +13,9 @@ gateway_name        = "roca-igw"
 route_table_name    = "roca-route-table"
 
 # ALB Configuration
-alb_name            = "roca-alb"
-target_group_name   = "roca-tg"
-target_port         = 80
+alb_name          = "roca-alb"
+target_group_name = "roca-tg"
+target_port       = 80
 
 # ECS Configuration
 ecs_cluster_name    = "roca-cluster"
@@ -23,7 +23,7 @@ ecs_task_family     = "roca-task"
 ecs_cpu             = "256"
 ecs_memory          = "512"
 ecs_container_name  = "roca-app-container"
-ecs_container_image = "nginx:latest"  # Cambiar por tu imagen Docker
+ecs_container_image = "nginx:latest" # Cambiar por tu imagen Docker
 ecs_container_port  = 80
 ecs_service_name    = "roca-service"
 ecs_desired_count   = 2

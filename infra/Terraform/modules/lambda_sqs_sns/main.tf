@@ -1,8 +1,8 @@
 # Subir el archivo ZIP de Lambda al bucket S3
 resource "aws_s3_object" "lambda_zip" {
-  bucket = var.terraform_bucket_name            # Usar el bucket de Terraform
-  key    = "lambda/${var.lambda_zip_file_name}" # Guardar en un subdirectorio llamado "lambda"
-  source = "${path.root}/resources/${var.lambda_zip_file_name}" # Ruta local al archivo ZIP
+  bucket = var.terraform_bucket_name                                     # Usar el bucket de Terraform
+  key    = "lambda/${var.lambda_zip_file_name}"                          # Guardar en un subdirectorio llamado "lambda"
+  source = "${path.root}/resources/${var.lambda_zip_file_name}"          # Ruta local al archivo ZIP
   etag   = filemd5("${path.root}/resources/${var.lambda_zip_file_name}") # Verificar hash del archivo
 
   tags = {
@@ -26,7 +26,7 @@ resource "aws_sns_topic" "sns_topic" {
 resource "aws_sqs_queue" "sqs_queue" {
   name                      = var.sqs_queue_name
   kms_master_key_id         = "alias/aws/sqs"
-  message_retention_seconds = 1209600  # 14 días
+  message_retention_seconds = 1209600 # 14 días
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq_queue.arn
@@ -68,8 +68,8 @@ resource "aws_lambda_function" "lambda_function" {
     }
   }
 
-  timeout      = var.lambda_timeout
-  memory_size  = var.lambda_memory
+  timeout     = var.lambda_timeout
+  memory_size = var.lambda_memory
 }
 
 # Asociar Lambda con la cola SQS
@@ -91,7 +91,7 @@ resource "aws_lambda_function_event_invoke_config" "sns_destination" {
     }
   }
 
-  maximum_retry_attempts      = 2
+  maximum_retry_attempts       = 2
   maximum_event_age_in_seconds = 60
 }
 
@@ -103,7 +103,7 @@ resource "aws_iam_role" "lambda_role" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect    = "Allow",
+        Effect = "Allow",
         Principal = {
           Service = "lambda.amazonaws.com"
         },
@@ -115,14 +115,14 @@ resource "aws_iam_role" "lambda_role" {
 
 # Asociar políticas al rol de Lambda
 resource "aws_iam_role_policy" "lambda_policy" {
-  name   = "${var.lambda_name}_policy"
-  role   = aws_iam_role.lambda_role.id
+  name = "${var.lambda_name}_policy"
+  role = aws_iam_role.lambda_role.id
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -130,8 +130,8 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = "arn:aws:logs:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.lambda_name}:*"
       },
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "sqs:SendMessage",
           "sqs:ReceiveMessage",
           "sqs:DeleteMessage",
@@ -148,8 +148,8 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = aws_sns_topic.sns_topic.arn
       },
       {
-        Effect   = "Allow",
-        Action   = [
+        Effect = "Allow",
+        Action = [
           "kms:Decrypt",
           "kms:GenerateDataKey"
         ],

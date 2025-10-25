@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.5.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -10,10 +10,10 @@ terraform {
 
   backend "s3" {
     bucket         = "mi-terraform-state-bucket1" # Nombre del bucket existente
-    key            = "state/terraform.tfstate"   # Ruta del archivo de estado
-    region         = "us-east-1"                # Región del bucket
-    dynamodb_table = "terraform-lock"           # Tabla DynamoDB para bloqueo remoto
-    encrypt        = true                       # Encriptar estado remoto
+    key            = "state/terraform.tfstate"    # Ruta del archivo de estado
+    region         = "us-east-1"                  # Región del bucket
+    dynamodb_table = "terraform-lock"             # Tabla DynamoDB para bloqueo remoto
+    encrypt        = true                         # Encriptar estado remoto
   }
 }
 
@@ -35,36 +35,36 @@ module "vpc" {
 }
 
 module "alb" {
-  source              = "./modules/alb"
-  alb_name            = var.alb_name
-  target_group_name   = var.target_group_name
-  target_port         = var.target_port
-  vpc_id              = module.vpc.vpc_id
-  subnet_ids          = [module.vpc.public_subnet_id]
-  security_group_ids  = [aws_security_group.alb_sg.id]
+  source             = "./modules/alb"
+  alb_name           = var.alb_name
+  target_group_name  = var.target_group_name
+  target_port        = var.target_port
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = [module.vpc.public_subnet_id]
+  security_group_ids = [aws_security_group.alb_sg.id]
 }
 
 module "ecs" {
-  source              = "./modules/ecs"
-  cluster_name        = var.ecs_cluster_name
-  task_family         = var.ecs_task_family
-  cpu                 = var.ecs_cpu
-  memory              = var.ecs_memory
-  execution_role_arn  = aws_iam_role.ecs_task_execution_role.arn
-  container_name      = var.ecs_container_name
-  container_image     = var.ecs_container_image
-  container_port      = var.ecs_container_port
-  service_name        = var.ecs_service_name
-  desired_count       = var.ecs_desired_count
-  subnet_ids          = [module.vpc.private_subnet_id]
-  security_group_ids  = [aws_security_group.ecs_sg.id]
-  target_group_arn    = module.alb.target_group_arn
-  
+  source             = "./modules/ecs"
+  cluster_name       = var.ecs_cluster_name
+  task_family        = var.ecs_task_family
+  cpu                = var.ecs_cpu
+  memory             = var.ecs_memory
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  container_name     = var.ecs_container_name
+  container_image    = var.ecs_container_image
+  container_port     = var.ecs_container_port
+  service_name       = var.ecs_service_name
+  desired_count      = var.ecs_desired_count
+  subnet_ids         = [module.vpc.private_subnet_id]
+  security_group_ids = [aws_security_group.ecs_sg.id]
+  target_group_arn   = module.alb.target_group_arn
+
   depends_on = [module.alb]
 }
 
 module "lambda_sqs_sns" {
-  source               = "./modules/lambda_sqs_sns"
+  source                = "./modules/lambda_sqs_sns"
   terraform_bucket_name = var.terraform_bucket_name # Reutilizar el bucket del tfstate
   lambda_zip_file_name  = var.lambda_zip_file_name
   lambda_name           = var.lambda_name
