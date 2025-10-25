@@ -17,16 +17,16 @@ alb_name          = "roca-alb"
 target_group_name = "roca-tg"
 target_port       = 80
 
-# ECS Configuration
-ecs_cluster_name    = "roca-cluster"
-ecs_task_family     = "roca-task"
-ecs_cpu             = "256"
-ecs_memory          = "512"
-ecs_container_name  = "roca-app-container"
-ecs_container_image = "nginx:latest" # Cambiar por tu imagen Docker
-ecs_container_port  = 80
-ecs_service_name    = "roca-service"
-ecs_desired_count   = 2
+# EKS Configuration (anteriormente ECS)
+ecs_cluster_name    = "roca-cluster"       # Ahora usado para EKS
+ecs_task_family     = "roca-task"          # Mantenido por compatibilidad
+ecs_cpu             = "256"                # Ahora usado para EKS
+ecs_memory          = "512"                # Ahora usado para EKS
+ecs_container_name  = "roca-app-container" # Ahora usado para EKS
+ecs_container_image = "nginx:latest"       # Ahora usado para EKS
+ecs_container_port  = 80                   # Ahora usado para EKS
+ecs_service_name    = "roca-service"       # Ahora usado para EKS
+ecs_desired_count   = 2                    # Ahora usado para EKS
 
 # Lambda Configuration
 terraform_bucket_name = "mi-terraform-state-bucket1"

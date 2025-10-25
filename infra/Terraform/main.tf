@@ -44,42 +44,26 @@ module "alb" {
   security_group_ids = [aws_security_group.alb_sg.id]
 }
 
-module "ecs" {
-  source             = "./modules/ecs"
-  cluster_name       = var.ecs_cluster_name
-  task_family        = var.ecs_task_family
+# Reemplazar el módulo ECS por EKS
+# Módulo EKS (reemplazando ECS)
+module "eks" {
+  source             = "./modules/eks"
+  cluster_name       = var.ecs_cluster_name # Reutilizamos las variables de ECS para mantener compatibilidad
+  kubernetes_version = "1.27"               # Versión de Kubernetes
   cpu                = var.ecs_cpu
   memory             = var.ecs_memory
-  execution_role_arn = data.aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn = "" # Ya no necesitamos el rol de ejecución de ECS
   container_name     = var.ecs_container_name
   container_image    = var.ecs_container_image
   container_port     = var.ecs_container_port
   service_name       = var.ecs_service_name
   desired_count      = var.ecs_desired_count
   subnet_ids         = [module.vpc.private_subnet_id]
-  security_group_ids = [aws_security_group.ecs_sg.id]
+  security_group_ids = [aws_security_group.ecs_sg.id] # Seguimos usando el mismo grupo de seguridad
   target_group_arn   = module.alb.target_group_arn
 
   depends_on = [module.alb]
 }
-
-# Lambda + SQS + SNS deshabilitado para AWS Labs (requiere crear roles IAM)
-# Descomentar cuando tengas permisos completos en AWS
-# module "lambda_sqs_sns" {
-#   source                = "./modules/lambda_sqs_sns"
-#   terraform_bucket_name = var.terraform_bucket_name
-#   lambda_zip_file_name  = var.lambda_zip_file_name
-#   lambda_name           = var.lambda_name
-#   lambda_runtime        = var.lambda_runtime
-#   lambda_handler        = var.lambda_handler
-#   lambda_timeout        = var.lambda_timeout
-#   lambda_memory         = var.lambda_memory
-#   sqs_queue_name        = var.sqs_queue_name
-#   sns_topic_name        = var.sns_topic_name
-#   environment           = var.environment
-# }
-
-
 
 # Security Groups
 resource "aws_security_group" "alb_sg" {
@@ -115,8 +99,8 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group" "ecs_sg" {
-  name        = "${var.environment}-ecs-sg"
-  description = "Security group for ECS tasks"
+  name        = "${var.environment}-eks-sg"   # Cambiado de ecs-sg a eks-sg
+  description = "Security group for EKS pods" # Cambiado de ECS tasks a EKS pods
   vpc_id      = module.vpc.vpc_id
 
   ingress {
@@ -134,54 +118,20 @@ resource "aws_security_group" "ecs_sg" {
   }
 
   tags = {
+    Name = "${var.environment}-eks-sg"
   }
 }
 
-# IAM Role for ECS Task Execution
-# IAM Role para ECS deshabilitado para AWS Labs (requiere permisos de creación de roles)
-# Descomentar cuando tengas permisos completos en AWS
-# resource "aws_iam_role" "ecs_task_execution_role" {
-#   name = "${var.environment}-ecs-task-execution-role"
-#
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17",
-#     Statement = [
-#       {
-#         Action = "sts:AssumeRole",
-#         Effect = "Allow",
-#         Principal = {
-#           Service = "ecs-tasks.amazonaws.com"
-#         }
-#       }
-#     ]
-#   })
-#
-#   tags = {
-#     Name        = "${var.environment}-ecs-task-execution-role"
-#     Environment = var.environment
-#   }
-# }
-#
-# resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-#   role       = aws_iam_role.ecs_task_execution_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-# }
-
-# Usar rol existente en AWS Labs
-data "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole"
-}
-
-# CloudWatch Monitoring for ECS
+# CloudWatch Monitoring para EKS (reutilizando el módulo de CloudWatch)
 module "cloudwatch" {
   source = "./modules/cloudwatch"
 
-  ecs_cluster_name   = module.ecs.cluster_name
-  ecs_service_name   = module.ecs.service_name
-  sns_topic_arn      = "" # Deshabilitado para AWS Labs (Lambda/SNS requiere roles IAM)
+  ecs_cluster_name   = module.eks.cluster_name # Ahora apunta al cluster EKS
+  ecs_service_name   = module.eks.service_name # Ahora apunta al servicio de EKS
+  sns_topic_arn      = ""                      # Deshabilitado para AWS Labs (Lambda/SNS requiere roles IAM)
   cpu_threshold      = var.cpu_threshold
   memory_threshold   = var.memory_threshold
   desired_task_count = var.ecs_desired_count
 
-  depends_on = [module.ecs]
+  depends_on = [module.eks]
 }

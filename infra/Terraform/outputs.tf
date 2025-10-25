@@ -94,3 +94,19 @@ output "ecs_running_tasks_alarm_arn" {
   description = "ARN de la alarma de tareas ejecutándose"
   value       = module.cloudwatch.ecs_running_tasks_alarm_arn
 }
+
+# Outputs de EKS (reemplazando los de ECS)
+output "cluster_name" {
+  description = "Nombre del cluster EKS"
+  value       = module.eks.cluster_name
+}
+
+output "cluster_arn" {
+  description = "ARN del cluster EKS"
+  value       = module.eks.cluster_arn
+}
+
+output "service_name" {
+  description = "Nombre del servicio Kubernetes"
+  value       = module.eks.service_name
+}
