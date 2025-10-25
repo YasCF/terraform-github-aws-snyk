@@ -30,69 +30,44 @@ output "target_group_arn" {
   value       = module.alb.target_group_arn
 }
 
-# ECS Outputs
+# EKS Outputs (anteriormente ECS)
 output "ecs_cluster_name" {
-  description = "Nombre del cluster ECS"
-  value       = module.ecs.cluster_name
+  description = "Nombre del cluster (ahora EKS)"
+  value       = module.eks.cluster_name
 }
 
 output "ecs_cluster_arn" {
-  description = "ARN del cluster ECS"
-  value       = module.ecs.cluster_arn
+  description = "ARN del cluster (ahora EKS)"
+  value       = module.eks.cluster_arn
 }
 
 output "ecs_service_name" {
-  description = "Nombre del servicio ECS"
-  value       = module.ecs.service_name
+  description = "Nombre del servicio (ahora Kubernetes)"
+  value       = module.eks.service_name
 }
 
+# Este output necesita ser eliminado o modificado ya que EKS no tiene task_definition_arn
+# Opción 1: Eliminar el output
+# Opción 2: Proporcionar un valor simulado o alternativo
 output "ecs_task_definition_arn" {
-  description = "ARN de la definición de tarea ECS"
-  value       = module.ecs.task_definition_arn
+  description = "ARN de la definición de tarea (simulado para EKS)"
+  value       = "arn:aws:eks:${module.eks.cluster_name}:task-definition/simulated"
 }
 
-# Lambda Outputs
-# output "lambda_function_name" {
-#   description = "Nombre de la función Lambda"
-#   value       = module.lambda_sqs_sns.lambda_function_name
-# }
-
-# output "lambda_function_arn" {
-#   description = "ARN de la función Lambda"
-#   value       = module.lambda_sqs_sns.lambda_function_arn
-# }
-
-# SQS Outputs
-# output "sqs_queue_url" {
-#   description = "URL de la cola SQS"
-#   value       = module.lambda_sqs_sns.sqs_queue_url
-# }
-
-# output "sqs_queue_arn" {
-#   description = "ARN de la cola SQS"
-#   value       = module.lambda_sqs_sns.sqs_queue_arn
-# }
-
-# SNS Outputs
-# output "sns_topic_arn" {
-#   description = "ARN del tema SNS"
-#   value       = module.lambda_sqs_sns.sns_topic_arn
-# }
-
-# CloudWatch Outputs
-output "ecs_cpu_alarm_arn" {
-  description = "ARN de la alarma de CPU del servicio ECS"
-  value       = module.cloudwatch.ecs_cpu_alarm_arn
+# CloudWatch Outputs (ahora Kubernetes)
+output "cluster_cpu_alarm_arn" {
+  description = "ARN de la alarma de CPU del cluster Kubernetes"
+  value       = module.cloudwatch.cluster_cpu_alarm_arn
 }
 
-output "ecs_memory_alarm_arn" {
-  description = "ARN de la alarma de memoria del servicio ECS"
-  value       = module.cloudwatch.ecs_memory_alarm_arn
+output "cluster_memory_alarm_arn" {
+  description = "ARN de la alarma de memoria del cluster Kubernetes"
+  value       = module.cloudwatch.cluster_memory_alarm_arn
 }
 
-output "ecs_running_tasks_alarm_arn" {
-  description = "ARN de la alarma de tareas ejecutándose"
-  value       = module.cloudwatch.ecs_running_tasks_alarm_arn
+output "cluster_running_pods_alarm_arn" {
+  description = "ARN de la alarma de pods ejecutándose"
+  value       = module.cloudwatch.cluster_running_pods_alarm_arn
 }
 
 # Outputs de EKS (reemplazando los de ECS)
