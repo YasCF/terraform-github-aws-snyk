@@ -6,6 +6,9 @@ on:
     paths:
       - 'infra/Terraform/**'
 
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
 jobs:
   terraform-scan:
     runs-on: ubuntu-latest
