@@ -14,6 +14,13 @@ on:
           - all   # Ejecuta init, plan y apply
           - destroy
 
+env:
+  TF_VERSION: "1.9.0"
+  AWS_REGION: "us-east-1"
+  TF_BUCKET: ${{ secrets.TF_BUCKET }}
+  TF_DYNAMODB_TABLE: ${{ secrets.TF_DYNAMODB_TABLE }}
+  TF_STATE_KEY: "state/terraform.tfstate"
+
 jobs:
   init:
     if: ${{ github.event.inputs.action == 'init' || github.event.inputs.action == 'all' }}
@@ -32,12 +39,25 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        working-directory: ./infra/Terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        working-directory: ./infra/Terraform
+        run: terraform validate
 
       - name: Terraform Init
-        working-directory: ./Terraform
+        working-directory: ./infra/Terraform
         run: |
-          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
+          terraform init \
+            -backend-config="bucket=${{ env.TF_BUCKET }}" \
+            -backend-config="key=${{ env.TF_STATE_KEY }}" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ env.TF_DYNAMODB_TABLE }}" \
+            -reconfigure
 
   plan:
     if: ${{ github.event.inputs.action == 'plan' || github.event.inputs.action == 'all' }}
@@ -57,12 +77,21 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./infra/Terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_BUCKET }}" \
+            -backend-config="key=${{ env.TF_STATE_KEY }}" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ env.TF_DYNAMODB_TABLE }}" \
+            -reconfigure
 
       - name: Terraform Plan
-        working-directory: ./Terraform
+        working-directory: ./infra/Terraform
         run: |
-          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
           terraform plan -var-file="terraform.tfvars" -out=tfplan
 
   apply:
@@ -83,13 +112,26 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./infra/Terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_BUCKET }}" \
+            -backend-config="key=${{ env.TF_STATE_KEY }}" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ env.TF_DYNAMODB_TABLE }}" \
+            -reconfigure
+
+      - name: Terraform Plan
+        working-directory: ./infra/Terraform
+        run: |
+          terraform plan -var-file="terraform.tfvars" -out=tfplan
 
       - name: Terraform Apply
-        working-directory: ./Terraform
+        working-directory: ./infra/Terraform
         run: |
-          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
-          terraform plan -var-file="terraform.tfvars" -out=tfplan
           terraform apply -auto-approve tfplan
 
   destroy:
@@ -109,10 +151,19 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./infra/Terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_BUCKET }}" \
+            -backend-config="key=${{ env.TF_STATE_KEY }}" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=${{ env.TF_DYNAMODB_TABLE }}" \
+            -reconfigure
 
       - name: Terraform Destroy
-        working-directory: ./Terraform
+        working-directory: ./infra/Terraform
         run: |
-          terraform init -backend-config="bucket=mi-terraform-state-bucket1" -backend-config="key=terraform/state/terraform.tfstate" -backend-config="region=us-east-1" -reconfigure
-          terraform destroy -auto-approve
+          terraform destroy -auto-approve -var-file="terraform.tfvars"

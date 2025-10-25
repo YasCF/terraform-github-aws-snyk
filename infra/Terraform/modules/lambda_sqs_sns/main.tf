@@ -11,24 +11,43 @@ resource "aws_s3_object" "lambda_zip" {
   }
 }
 
-# Crear el tema SNS
+# Crear el tema SNS con encriptación
 resource "aws_sns_topic" "sns_topic" {
-  name = var.sns_topic_name
+  name              = var.sns_topic_name
+  kms_master_key_id = "alias/aws/sns"
+
+  tags = {
+    Environment = var.environment
+    Name        = var.sns_topic_name
+  }
 }
 
-# Crear la cola SQS
+# Crear la cola SQS con encriptación
 resource "aws_sqs_queue" "sqs_queue" {
-  name = var.sqs_queue_name
+  name                      = var.sqs_queue_name
+  kms_master_key_id         = "alias/aws/sqs"
+  message_retention_seconds = 1209600  # 14 días
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.dlq_queue.arn
     maxReceiveCount     = 5
   })
+
+  tags = {
+    Environment = var.environment
+    Name        = var.sqs_queue_name
+  }
 }
 
-# Crear la cola SQS Dead Letter (DLQ)
+# Crear la cola SQS Dead Letter (DLQ) con encriptación
 resource "aws_sqs_queue" "dlq_queue" {
-  name = "${var.sqs_queue_name}-dlq"
+  name              = "${var.sqs_queue_name}-dlq"
+  kms_master_key_id = "alias/aws/sqs"
+
+  tags = {
+    Environment = var.environment
+    Name        = "${var.sqs_queue_name}-dlq"
+  }
 }
 
 # Crear la función Lambda
@@ -108,7 +127,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
-        Resource = "arn:aws:logs:*:*:*"
+        Resource = "arn:aws:logs:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.lambda_name}:*"
       },
       {
         Effect   = "Allow",
@@ -118,13 +137,27 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "sqs:DeleteMessage",
           "sqs:GetQueueAttributes"
         ],
-        Resource = aws_sqs_queue.sqs_queue.arn
+        Resource = [
+          aws_sqs_queue.sqs_queue.arn,
+          aws_sqs_queue.dlq_queue.arn
+        ]
       },
       {
         Effect   = "Allow",
         Action   = "sns:Publish",
         Resource = aws_sns_topic.sns_topic.arn
+      },
+      {
+        Effect   = "Allow",
+        Action   = [
+          "kms:Decrypt",
+          "kms:GenerateDataKey"
+        ],
+        Resource = "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
       }
     ]
   })
 }
+
+# Data source para obtener el ID de la cuenta
+data "aws_caller_identity" "current" {}

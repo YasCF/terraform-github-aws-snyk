@@ -1,5 +1,5 @@
 variable "aws_region" {
-  description = "Región de AWS"
+  description = "Región de AWS donde se desplegará la infraestructura"
   type        = string
   default     = "us-east-1"
 }
@@ -13,7 +13,7 @@ variable "vpc_cidr_block" {
 variable "vpc_name" {
   description = "Nombre de la VPC"
   type        = string
-  default     = "mi-vpc"
+  default     = "main-vpc"
 }
 
 variable "public_subnet_cidr" {
@@ -31,25 +31,25 @@ variable "private_subnet_cidr" {
 variable "public_subnet_name" {
   description = "Nombre de la subred pública"
   type        = string
-  default     = "mi-subred-publica"
+  default     = "public-subnet"
 }
 
 variable "private_subnet_name" {
   description = "Nombre de la subred privada"
   type        = string
-  default     = "mi-subred-privada"
+  default     = "private-subnet"
 }
 
 variable "gateway_name" {
   description = "Nombre del Internet Gateway"
   type        = string
-  default     = "mi-gateway"
+  default     = "main-igw"
 }
 
 variable "route_table_name" {
   description = "Nombre de la tabla de rutas"
   type        = string
-  default     = "mi-tabla-rutas"
+  default     = "public-route-table"
 }
 
 variable "availability_zone" {
@@ -58,35 +58,91 @@ variable "availability_zone" {
   default     = "us-east-1a"
 }
 
-variable "ami" {
-  description = "AMI ID para la instancia EC2"
+
+# ALB Configuration
+variable "alb_name" {
+  description = "Nombre del Application Load Balancer"
+  type        = string
+  default     = "main-alb"
+}
+
+variable "target_group_name" {
+  description = "Nombre del grupo objetivo del ALB"
+  type        = string
+  default     = "ecs-target-group"
+}
+
+variable "target_port" {
+  description = "Puerto del grupo objetivo"
+  type        = number
+  default     = 80
+
+  validation {
+    condition     = var.target_port > 0 && var.target_port <= 65535
+    error_message = "El puerto debe estar entre 1 y 65535."
+  }
+}
+
+# ECS Configuration
+variable "ecs_cluster_name" {
+  description = "Nombre del cluster ECS"
+  type        = string
+  default     = "main-cluster"
+}
+
+variable "ecs_task_family" {
+  description = "Familia de tareas ECS"
+  type        = string
+  default     = "main-task"
+}
+
+variable "ecs_cpu" {
+  description = "CPU asignada a la tarea ECS (en unidades CPU)"
+  type        = string
+  default     = "256"
+
+  validation {
+    condition     = contains(["256", "512", "1024", "2048", "4096"], var.ecs_cpu)
+    error_message = "El CPU debe ser 256, 512, 1024, 2048 o 4096."
+  }
+}
+
+variable "ecs_memory" {
+  description = "Memoria asignada a la tarea ECS (en MB)"
+  type        = string
+  default     = "512"
+}
+
+variable "ecs_container_name" {
+  description = "Nombre del contenedor ECS"
+  type        = string
+  default     = "app-container"
+}
+
+variable "ecs_container_image" {
+  description = "Imagen Docker para el contenedor ECS"
   type        = string
 }
 
-variable "instance_type" {
-  description = "Tipo de instancia EC2"
-  type        = string
-  default     = "t2.micro"
+variable "ecs_container_port" {
+  description = "Puerto del contenedor ECS"
+  type        = number
+  default     = 8080
 }
 
-variable "key_name" {
-  description = "Nombre de la clave SSH para la instancia"
+variable "ecs_service_name" {
+  description = "Nombre del servicio ECS"
   type        = string
+  default     = "main-service"
 }
 
-variable "security_group_name" {
-  description = "Nombre del grupo de seguridad"
-  type        = string
-  default     = "mi-ec2-sg"
+variable "ecs_desired_count" {
+  description = "Número deseado de tareas ECS"
+  type        = number
+  default     = 2
 }
 
-variable "instance_name" {
-  description = "Nombre para la instancia EC2"
-  type        = string
-  default     = "mi-instancia-ec2"
-}
-
-
+# Lambda Configuration
 variable "terraform_bucket_name" {
   description = "Nombre del bucket S3 para el estado de Terraform"
   type        = string
@@ -103,67 +159,39 @@ variable "lambda_name" {
 }
 
 variable "lambda_runtime" {
-  description = "Runtime de Lambda"
-  type        = string
+  description = "Runtime de Lambda (ej: python3.11, nodejs18.x)"
 }
 
 variable "lambda_handler" {
-  description = "Handler de Lambda"
+  description = "Handler de Lambda (ej: index.handler)"
   type        = string
 }
 
 variable "lambda_timeout" {
   description = "Timeout de Lambda (en segundos)"
   type        = number
+  default     = 60
 }
 
 variable "lambda_memory" {
   description = "Memoria asignada a Lambda (en MB)"
   type        = number
+  default     = 128
 }
 
-# Configuración de SQS
+# SQS Configuration
 variable "sqs_queue_name" {
   description = "Nombre de la cola SQS"
   type        = string
 }
 
-# Configuración de SNS
+# SNS Configuration
 variable "sns_topic_name" {
   description = "Nombre del tema SNS"
   type        = string
 }
 
-
-variable "cpu_threshold" {
-  description = "Umbral de uso de CPU para la instancia EC2"
-  type        = number
-  default     = 80
-}
-
-variable "network_out_threshold" {
-  description = "Umbral de salida de red (bytes) para la instancia EC2"
-  type        = number
-  default     = 1000000
-}
-
-variable "network_in_threshold" {
-  description = "Umbral de datos entrantes para la alarma (en bytes)"
-  type        = number
-  default     = 500000  # 500 KB
-}
 variable "dynamodb_table_name" {
   description = "Nombre de la tabla DynamoDB para el estado de bloqueo remoto"
   type        = string
-}
-
-variable "environment" {
-  description = "Entorno (e.g., dev, prod)"
-  type        = string
-}
-
-variable "user_data" {
-  description = "Script de configuración para la instancia EC2"
-  type        = string
-  default     = ""
 }

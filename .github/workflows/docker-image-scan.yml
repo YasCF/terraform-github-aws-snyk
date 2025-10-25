@@ -2,6 +2,18 @@ name: Docker Image Scan
 
 on:
   workflow_dispatch:
+    inputs:
+      ecr_repository:
+        description: "ECR Repository name"
+        required: true
+        default: "mi-app-web"
+      image_tag:
+        description: "Docker image tag"
+        required: true
+        default: "latest"
+
+env:
+  AWS_REGION: "us-east-1"
 
 jobs:
   docker-image-scan:
@@ -15,17 +27,29 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "us-east-1"
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
+        id: login-ecr
+
+      - name: Get AWS Account ID
+        id: account
+        run: echo "account_id=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_OUTPUT
 
       - name: List Docker Images
-        run: aws ecr list-images --repository-name mi-app-web --region us-east-1
+        run: |
+          aws ecr list-images \
+            --repository-name ${{ github.event.inputs.ecr_repository }} \
+            --region ${{ env.AWS_REGION }}
 
       - name: Pull Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ github.event.inputs.ecr_repository }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          docker pull 202533506302.dkr.ecr.us-east-1.amazonaws.com/mi-app-web:latest
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Install Snyk
         run: npm install -g snyk
@@ -38,6 +62,11 @@ jobs:
       - name: Scan Docker Image
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ github.event.inputs.ecr_repository }}
+          IMAGE_TAG: ${{ github.event.inputs.image_tag }}
         run: |
-          snyk container test 202533506302.dkr.ecr.us-east-1.amazonaws.com/mi-app-web:latest \
+          snyk container test $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            --severity-threshold=high \
+            --json-file-output=snyk-results.json
       

@@ -2,6 +2,9 @@ name: Terraform File Scan
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'infra/Terraform/**'
 
 jobs:
   terraform-scan:
@@ -9,6 +12,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.9.0"
+
+      - name: Terraform Format Check
+        working-directory: ./infra/Terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        working-directory: ./infra/Terraform
+        run: terraform validate
 
       - name: Install Snyk
         run: npm install -g snyk
@@ -19,5 +35,5 @@ jobs:
         run: snyk auth $SNYK_TOKEN
 
       - name: Scan Terraform Files
-        run: snyk iac test ./Terraform --severity-threshold=high
+        run: snyk iac test ./infra/Terraform --severity-threshold=high
         
