@@ -26,6 +26,10 @@ jobs:
         working-directory: ./infra/Terraform
         run: terraform fmt -check -recursive
 
+      - name: Terraform Init (for validation)
+        working-directory: ./infra/Terraform
+        run: terraform init -backend=false
+
       - name: Terraform Validate
         working-directory: ./infra/Terraform
         run: terraform validate
