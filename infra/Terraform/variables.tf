@@ -13,7 +13,7 @@ variable "vpc_cidr_block" {
 variable "vpc_name" {
   description = "Nombre de la VPC"
   type        = string
-  default     = "main-vpc"
+  default     = "roca-vpc"
 }
 
 variable "public_subnet_cidr" {
@@ -43,7 +43,7 @@ variable "private_subnet_name" {
 variable "gateway_name" {
   description = "Nombre del Internet Gateway"
   type        = string
-  default     = "main-igw"
+  default     = "roca-igw"
 }
 
 variable "route_table_name" {
@@ -63,7 +63,7 @@ variable "availability_zone" {
 variable "alb_name" {
   description = "Nombre del Application Load Balancer"
   type        = string
-  default     = "main-alb"
+  default     = "roca-alb"
 }
 
 variable "target_group_name" {
@@ -87,13 +87,13 @@ variable "target_port" {
 variable "ecs_cluster_name" {
   description = "Nombre del cluster ECS"
   type        = string
-  default     = "main-cluster"
+  default     = "roca-cluster"
 }
 
 variable "ecs_task_family" {
   description = "Familia de tareas ECS"
   type        = string
-  default     = "main-task"
+  default     = "roca-task"
 }
 
 variable "ecs_cpu" {
@@ -116,7 +116,7 @@ variable "ecs_memory" {
 variable "ecs_container_name" {
   description = "Nombre del contenedor ECS"
   type        = string
-  default     = "app-container"
+  default     = "roca-app-container"
 }
 
 variable "ecs_container_image" {
@@ -133,7 +133,7 @@ variable "ecs_container_port" {
 variable "ecs_service_name" {
   description = "Nombre del servicio ECS"
   type        = string
-  default     = "main-service"
+  default     = "roca-service"
 }
 
 variable "ecs_desired_count" {
