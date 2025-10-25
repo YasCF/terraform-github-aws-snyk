@@ -1,9 +1,4 @@
 name: Terraform File Scan
-#
-# Este workflow ejecuta validaciones de Terraform usando TFLint
-# No requiere secretos adicionales
-#
-# Ver: GITHUB_SECRETS_SETUP.md para instrucciones detalladas
 
 on:
   workflow_dispatch:
