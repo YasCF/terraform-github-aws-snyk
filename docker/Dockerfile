@@ -1,8 +1,17 @@
-# Usar la imagen base ligera de Nginx
-FROM nginx:alpine
+# Imagen base oficial de Python
+FROM python:3.11-slim
 
-# Copiar la página web al directorio predeterminado de Nginx
-COPY ./app/index.html /usr/share/nginx/html/index.html
+# Establece el directorio de trabajo
+WORKDIR /app
 
-# Exponer el puerto 80 para el acceso HTTP
-EXPOSE 80
+# Copia los archivos de tu proyecto
+COPY . /app
+
+# Instala dependencias
+RUN pip install --no-cache-dir flask
+
+# Expone el puerto por defecto de Flask
+EXPOSE 5000
+
+# Comando para ejecutar la app
+CMD ["python", "app.py"]

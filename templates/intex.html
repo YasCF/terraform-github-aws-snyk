@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vende tu auto | RoCa Motors</title>
+</head>
+<body>
+  <h1>Vende tu auto con RoCa Motors</h1>
+  <p>Proceso seguro, pago inmediato y sin complicaciones.</p>
+
+  <form action="{{ url_for('procesar') }}" method="post">
+    <label>Marca:</label><br>
+    <input type="text" name="marca"><br>
+    <label>Modelo:</label><br>
+    <input type="text" name="modelo"><br>
+    <label>Año:</label><br>
+    <input type="text" name="año"><br><br>
+    <button type="submit">Comenzar</button>
+  </form>
+
+  <h2>¿Por qué RoCa Motors?</h2>
+  <ul>
+    <li>🔒 Seguro</li>
+    <li>💸 Pago inmediato</li>
+    <li>📄 Sin papeleo</li>
+  </ul>
+
+  <h2>¿Cómo funciona?</h2>
+  <ol>
+    <li>Obtén una oferta</li>
+    <li>Agenda una inspección</li>
+    <li>Recibe tu pago</li>
+  </ol>
+</body>
+</html>
