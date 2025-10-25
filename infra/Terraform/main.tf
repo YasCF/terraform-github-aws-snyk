@@ -22,9 +22,9 @@ provider "aws" {
 }
 
 module "vpc" {
-  source              = "./modules/vpc"
-  cidr_block          = var.vpc_cidr_block
-  vpc_name            = var.vpc_name
+  source     = "./modules/vpc"
+  cidr_block = var.vpc_cidr_block
+  vpc_name   = var.vpc_name
   #public_subnet_cidr  = var.public_subnet_cidr
   public_subnet_cidrs = var.public_subnet_cidr
   private_subnet_cidr = var.private_subnet_cidr
