@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "environment" {
+  description = "Entorno de despliegue (dev, staging, prod)"
+  type        = string
+  default     = "dev"
+}
+
 variable "vpc_cidr_block" {
   description = "CIDR block para la VPC"
   type        = string
