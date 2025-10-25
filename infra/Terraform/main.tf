@@ -178,7 +178,7 @@ module "cloudwatch" {
 
   ecs_cluster_name   = module.ecs.cluster_name
   ecs_service_name   = module.ecs.service_name
-  sns_topic_arn      = ""  # Deshabilitado para AWS Labs (Lambda/SNS requiere roles IAM)
+  sns_topic_arn      = "" # Deshabilitado para AWS Labs (Lambda/SNS requiere roles IAM)
   cpu_threshold      = var.cpu_threshold
   memory_threshold   = var.memory_threshold
   desired_task_count = var.ecs_desired_count

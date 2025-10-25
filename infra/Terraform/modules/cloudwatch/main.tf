@@ -56,3 +56,4 @@ resource "aws_cloudwatch_metric_alarm" "ecs_running_tasks_alarm" {
   period              = 60
   statistic           = "Average"
   threshold           = var.desired_task_count
+}
