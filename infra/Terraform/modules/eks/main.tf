@@ -78,6 +78,24 @@ resource "aws_iam_role" "eks_node_role" {
   })
 }
 
+resource "aws_security_group" "eks_sg" {
+  name        = "${var.environment}-eks-sg"
+  description = "Security group for EKS nodes"
+  vpc_id      = module.vpc.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.environment}-eks-sg"
+    Environment = var.environment
+  }
+}
+
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.eks_node_role.name

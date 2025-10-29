@@ -49,7 +49,7 @@ module "alb" {
 # Módulo EKS (reemplazando ECS)
 module "eks" {
   source             = "./modules/eks"
-  cluster_name       = var.ecs_cluster_name # Reutilizamos las variables de ECS para mantener compatibilidad
+  cluster_name       = var.eks_cluster_name # Reutilizamos las variables de ECS para mantener compatibilidad
   kubernetes_version = "1.27"               # Versión de Kubernetes
   cpu                = var.ecs_cpu
   memory             = var.ecs_memory
@@ -59,8 +59,9 @@ module "eks" {
   container_port     = var.ecs_container_port
   service_name       = var.ecs_service_name
   desired_count      = var.ecs_desired_count
-  subnet_ids         = [module.vpc.private_subnet_id]
-  security_group_ids = [aws_security_group.ecs_sg.id] # Seguimos usando el mismo grupo de seguridad
+  #subnet_ids         = [module.vpc.private_subnet_id]
+  subnet_ids         = module.vpc.public_subnet_ids
+  security_group_ids = [aws_security_group.eks_sg.id]
   target_group_arn   = module.alb.target_group_arn
 
   depends_on = [module.alb]

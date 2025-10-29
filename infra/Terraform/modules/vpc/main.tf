@@ -56,8 +56,14 @@ resource "aws_route_table" "public" {
   }
 }
 
-# Asociar Subred Pública con la Tabla de Rutas
+## Asociar Subred Pública con la Tabla de Rutas
+#resource "aws_route_table_association" "public" {
+#  subnet_id      = aws_subnet.public.id
+#  route_table_id = aws_route_table.public.id
+#}
+
 resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
+  count          = length(var.public_subnet_cidrs)
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }

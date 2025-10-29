@@ -214,3 +214,16 @@ variable "memory_threshold" {
   type        = number
   default     = 85
 }
+
+
+variable "public_subnet_azs" {
+  description = "Lista de zonas de disponibilidad para las subredes públicas"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]  # Ajusta según sea necesario
+}
+
+variable "eks_cluster_name" {
+  description = "Nombre del cluster EKS"
+  type        = string
+  default     = "roca-eks-cluster"
+}
