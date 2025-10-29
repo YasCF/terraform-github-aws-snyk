@@ -22,10 +22,10 @@ variable "vpc_name" {
   default     = "roca-vpc"
 }
 
-variable "public_subnet_cidr" {
+variable "public_subnet_cidrs" {
   description = "CIDR block para la subred pública"
-  type        = string
-  default     = "10.0.1.0/24"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.3.0/24"]
 }
 
 variable "private_subnet_cidr" {
