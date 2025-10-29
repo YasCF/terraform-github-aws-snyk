@@ -52,7 +52,7 @@ data "aws_iam_instance_profile" "eks_nodes" {
 }
 
 locals {
-  eks_sg_ids            = length(var.eks_security_group_ids) == 0 ? [aws_security_group.eks_sg[0].id] : var.eks_security_group_ids
+  eks_sg_ids             = length(var.eks_security_group_ids) == 0 ? [aws_security_group.eks_sg[0].id] : var.eks_security_group_ids
   resolved_node_role_arn = var.eks_node_role_arn != "" ? var.eks_node_role_arn : (var.eks_node_instance_profile_name != "" ? data.aws_iam_instance_profile.eks_nodes[0].role_arn : "")
 }
 
