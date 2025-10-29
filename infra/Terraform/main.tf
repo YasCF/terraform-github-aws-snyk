@@ -50,6 +50,7 @@ module "alb" {
 module "eks" {
   source             = "./modules/eks"
   cluster_name       = var.eks_cluster_name # Reutilizamos las variables de ECS para mantener compatibilidad
+  environment        = var.environment
   vpc_id             = module.vpc.vpc_id
   kubernetes_version = "1.27" # Versión de Kubernetes
   cpu                = var.ecs_cpu

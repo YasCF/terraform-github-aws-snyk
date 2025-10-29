@@ -66,7 +66,17 @@ variable "target_group_arn" {
 }
 
 variable "task_family" {
-  description = "Familia de tareas (mantenido para compatibilidad)"
+  description = "Familia de tareas"
   type        = string
   default     = ""
+}
+
+variable "vpc_id" {
+  description = "ID de la VPC donde desplegar los recursos de EKS"
+  type        = string
+}
+
+variable "environment" {
+  description = "Nombre del ambiente para etiquetado"
+  type        = string
 }
