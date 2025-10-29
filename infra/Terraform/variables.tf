@@ -96,13 +96,13 @@ variable "eks_cluster_name" {
   default     = "roca-cluster"
 }
 
-variable "eks_task_family" {
+variable "ecs_task_family" {
   description = "Familia de tareas ECS"
   type        = string
   default     = "roca-task"
 }
 
-variable "eks_cpu" {
+variable "ecs_cpu" {
   description = "CPU asignada a la tarea ECS (en unidades CPU)"
   type        = string
   default     = "256"
@@ -113,36 +113,36 @@ variable "eks_cpu" {
   }
 }
 
-variable "eks_memory" {
+variable "ecs_memory" {
   description = "Memoria asignada a la tarea ECS (en MB)"
   type        = string
   default     = "512"
 }
 
-variable "eks_container_name" {
+variable "ecs_container_name" {
   description = "Nombre del contenedor ECS"
   type        = string
   default     = "roca-app-container"
 }
 
-variable "eks_container_image" {
+variable "ecs_container_image" {
   description = "Imagen Docker para el contenedor ECS"
   type        = string
 }
 
-variable "eks_container_port" {
+variable "ecs_container_port" {
   description = "Puerto del contenedor ECS"
   type        = number
   default     = 8080
 }
 
-variable "eks_service_name" {
+variable "ecs_service_name" {
   description = "Nombre del servicio ECS"
   type        = string
   default     = "roca-service"
 }
 
-variable "eks_desired_count" {
+variable "ecs_desired_count" {
   description = "Número deseado de tareas ECS"
   type        = number
   default     = 2
