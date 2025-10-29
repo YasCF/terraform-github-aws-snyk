@@ -90,7 +90,7 @@ variable "target_port" {
 }
 
 # ECS Configuration
-variable "eks_cluster_name" {
+variable "ecs_cluster_name" {
   description = "Nombre del cluster ECS"
   type        = string
   default     = "roca-cluster"
