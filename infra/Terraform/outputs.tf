@@ -58,17 +58,17 @@ output "ecs_task_definition_arn" {
 # CloudWatch Outputs (ahora Kubernetes)
 output "cluster_cpu_alarm_arn" {
   description = "ARN de la alarma de CPU del cluster Kubernetes"
-  value       = module.cloudwatch.cluster_cpu_alarm_arn
+  value       = module.cloudwatch.ecs_cpu_alarm_arn
 }
 
 output "cluster_memory_alarm_arn" {
   description = "ARN de la alarma de memoria del cluster Kubernetes"
-  value       = module.cloudwatch.cluster_memory_alarm_arn
+  value       = module.cloudwatch.ecs_memory_alarm_arn
 }
 
 output "cluster_running_pods_alarm_arn" {
   description = "ARN de la alarma de pods ejecutándose"
-  value       = module.cloudwatch.cluster_running_pods_alarm_arn
+  value       = module.cloudwatch.ecs_running_tasks_alarm_arn
 }
 
 # Outputs de EKS (reemplazando los de ECS)
