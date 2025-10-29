@@ -64,7 +64,7 @@ module "eks" {
   environment        = var.environment
   vpc_id             = module.vpc.vpc_id
   cluster_role_arn   = var.eks_cluster_role_arn
-  node_role_arn      = var.eks_node_role_arn
+  node_role_arn      = local.resolved_node_role_arn
   kubernetes_version = "1.27" # Versión de Kubernetes
   cpu                = var.ecs_cpu
   memory             = var.ecs_memory
