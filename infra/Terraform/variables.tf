@@ -238,6 +238,12 @@ variable "eks_node_role_arn" {
   type        = string
 }
 
+variable "eks_node_instance_profile_name" {
+  description = "Nombre del Instance Profile existente para los nodos EKS; si se especifica y no se provee eks_node_role_arn, se derivará el ARN del rol desde este profile"
+  type        = string
+  default     = ""
+}
+
 variable "eks_security_group_ids" {
   description = "Lista de IDs de Security Groups existentes a usar por el cluster EKS"
   type        = list(string)
