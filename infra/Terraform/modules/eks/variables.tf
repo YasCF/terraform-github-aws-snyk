@@ -80,3 +80,13 @@ variable "environment" {
   description = "Nombre del ambiente para etiquetado"
   type        = string
 }
+
+variable "cluster_role_arn" {
+  description = "ARN del rol IAM existente para el cluster EKS"
+  type        = string
+}
+
+variable "node_role_arn" {
+  description = "ARN del rol IAM existente para los nodos de EKS"
+  type        = string
+}

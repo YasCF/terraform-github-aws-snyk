@@ -227,3 +227,19 @@ variable "eks_cluster_name" {
   type        = string
   default     = "roca-eks-cluster"
 }
+
+variable "eks_cluster_role_arn" {
+  description = "ARN del rol IAM existente para el cluster EKS"
+  type        = string
+}
+
+variable "eks_node_role_arn" {
+  description = "ARN del rol IAM existente para los nodos del EKS Node Group"
+  type        = string
+}
+
+variable "eks_security_group_ids" {
+  description = "Lista de IDs de Security Groups existentes a usar por el cluster EKS"
+  type        = list(string)
+  default     = []
+}

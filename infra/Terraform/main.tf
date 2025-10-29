@@ -45,6 +45,10 @@ module "alb" {
   security_group_ids = [aws_security_group.alb_sg.id]
 }
 
+locals {
+  eks_sg_ids = length(var.eks_security_group_ids) == 0 ? [aws_security_group.eks_sg[0].id] : var.eks_security_group_ids
+}
+
 # Reemplazar el módulo ECS por EKS
 # Módulo EKS (reemplazando ECS)
 module "eks" {
@@ -52,6 +56,8 @@ module "eks" {
   cluster_name       = var.eks_cluster_name # Reutilizamos las variables de ECS para mantener compatibilidad
   environment        = var.environment
   vpc_id             = module.vpc.vpc_id
+  cluster_role_arn   = var.eks_cluster_role_arn
+  node_role_arn      = var.eks_node_role_arn
   kubernetes_version = "1.27" # Versión de Kubernetes
   cpu                = var.ecs_cpu
   memory             = var.ecs_memory
@@ -63,7 +69,7 @@ module "eks" {
   desired_count      = var.ecs_desired_count
   #subnet_ids         = [module.vpc.private_subnet_id]
   subnet_ids         = module.vpc.public_subnet_ids
-  security_group_ids = [aws_security_group.eks_sg.id]
+  security_group_ids = local.eks_sg_ids
   target_group_arn   = module.alb.target_group_arn
 
   depends_on = [module.alb]
@@ -103,6 +109,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group" "eks_sg" {
+  count       = length(var.eks_security_group_ids) == 0 ? 1 : 0
   name        = "${var.environment}-eks-sg"   # Cambiado de ecs-sg a eks-sg
   description = "Security group for EKS pods" # Cambiado de ECS tasks a EKS pods
   vpc_id      = module.vpc.vpc_id
