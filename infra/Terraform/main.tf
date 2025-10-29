@@ -45,8 +45,15 @@ module "alb" {
   security_group_ids = [aws_security_group.alb_sg.id]
 }
 
+# Si se entrega un Instance Profile y no se provee el ARN del rol de nodos, derivarlo automáticamente
+data "aws_iam_instance_profile" "eks_nodes" {
+  count = var.eks_node_instance_profile_name != "" && var.eks_node_role_arn == "" ? 1 : 0
+  name  = var.eks_node_instance_profile_name
+}
+
 locals {
-  eks_sg_ids = length(var.eks_security_group_ids) == 0 ? [aws_security_group.eks_sg[0].id] : var.eks_security_group_ids
+  eks_sg_ids            = length(var.eks_security_group_ids) == 0 ? [aws_security_group.eks_sg[0].id] : var.eks_security_group_ids
+  resolved_node_role_arn = var.eks_node_role_arn != "" ? var.eks_node_role_arn : (var.eks_node_instance_profile_name != "" ? data.aws_iam_instance_profile.eks_nodes[0].role_arn : "")
 }
 
 # Reemplazar el módulo ECS por EKS

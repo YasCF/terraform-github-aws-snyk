@@ -128,6 +128,7 @@ variable "ecs_container_name" {
 variable "ecs_container_image" {
   description = "Imagen Docker para el contenedor ECS"
   type        = string
+  default     = "nginx:stable"
 }
 
 variable "ecs_container_port" {
@@ -231,11 +232,13 @@ variable "eks_cluster_name" {
 variable "eks_cluster_role_arn" {
   description = "ARN del rol IAM existente para el cluster EKS"
   type        = string
+  default     = ""
 }
 
 variable "eks_node_role_arn" {
   description = "ARN del rol IAM existente para los nodos del EKS Node Group"
   type        = string
+  default     = ""
 }
 
 variable "eks_node_instance_profile_name" {
