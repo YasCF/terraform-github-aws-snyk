@@ -219,7 +219,7 @@ variable "memory_threshold" {
 variable "public_subnet_azs" {
   description = "Lista de zonas de disponibilidad para las subredes públicas"
   type        = list(string)
-  default     = ["us-east-1a", "us-east-1b"]  # Ajusta según sea necesario
+  default     = ["us-east-1a", "us-east-1b"] # Ajusta según sea necesario
 }
 
 variable "eks_cluster_name" {
