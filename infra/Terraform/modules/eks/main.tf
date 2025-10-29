@@ -81,7 +81,7 @@ resource "aws_iam_role" "eks_node_role" {
 resource "aws_security_group" "eks_sg" {
   name        = "${var.environment}-eks-sg"
   description = "Security group for EKS nodes"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   egress {
     from_port   = 0

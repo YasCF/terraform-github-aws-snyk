@@ -6,7 +6,8 @@ output "vpc_id" {
 
 output "public_subnet_id" {
   description = "ID de la subred pública"
-  value       = module.vpc.public_subnet_id
+  #value       = module.vpc.public_subnet_id
+  value = module.vpc.public_subnet_ids[0]
 }
 
 output "private_subnet_id" {
